@@ -62,7 +62,6 @@ func findMin(numbers ...int) int {
 }
 
 // АНОНИМНЫЕ ФУНКЦИИ --- ФУНКЦИЯ ЗАМЫКАНИЯ
-// Такая функция запоминает состояние себя.
 func main2() {
 	func() {
 		fmt.Println("анонимная функция")
@@ -79,7 +78,7 @@ func main3() {
 	fmt.Println(inc())
 	fmt.Println(inc())
 }
-
+// Такая функция запоминает состояние себя.
 func incriment() func() int {
 	count := 0
 
