@@ -1,0 +1,6 @@
+ID: 1 | Email: user1@gmail.com
+Activity Log:
+0. [logged in] at 2025-06-02 20:29:58.757584 +0300 MSK m=+0.000722601
+1. [create record] at 2025-06-02 20:29:58.757584 +0300 MSK m=+0.000722601
+2. [create record] at 2025-06-02 20:29:58.757584 +0300 MSK m=+0.000722601
+3. [logged out] at 2025-06-02 20:29:58.757584 +0300 MSK m=+0.000722601
