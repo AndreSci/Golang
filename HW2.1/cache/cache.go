@@ -75,13 +75,16 @@ func (c * cache) timerDel(str string) {
 		time.Sleep(100 * time.Millisecond)
 
 		c.mu.Lock()
-		if time.Now().After(c.expireAt[str].Add(c.ttlHis[str])) {
+
+		ttl, ok := c.ttlHis[str]
+		
+		if ok && time.Now().After(c.expireAt[str].Add(ttl)) {
 			delete(c.m, str)
 			delete(c.expireAt, str)
 			delete(c.ttlHis, str)
 			c.mu.Unlock()
 			break
-		}else{
+		} else {
 			c.mu.Unlock()
 		}
 	}
