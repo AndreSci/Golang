@@ -32,7 +32,7 @@ func main() {
 	
 	fmt.Println("TIME ELAPSED:", time.Since(t).String())
 }
-
+// Сложная тема с стрелочками в каналах где указания стрелочки определяет уровень доступа(чтение\запись)
 func worker(id int, jobs <- chan int, results chan<- int) {
 	for j := range jobs {
 		time.Sleep(time.Second)
