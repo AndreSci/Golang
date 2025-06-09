@@ -7,6 +7,15 @@ import (
 	"time"
 )
 
+// Обьявляем структуру
+type cache struct {
+	m map[string]int
+	expireAt map[string]time.Time
+	ttlHis map[string]time.Duration
+	mu sync.Mutex
+}
+
+// Создаем образец структуры
 func New() *cache {
 	return &cache{
 		m: make(map[string]int),
@@ -15,13 +24,7 @@ func New() *cache {
 	}
 }
 
-type cache struct {
-	m map[string]int
-	expireAt map[string]time.Time
-	ttlHis map[string]time.Duration
-	mu sync.Mutex
-}
-
+// Добавляем элемент в массивы и при необходимости создаем горутину для самоудалении 
 func (c *cache) Set(str string, value any, ttl time.Duration) {
 	switch id := value.(type) {
 	case int:
@@ -43,6 +46,7 @@ func (c *cache) Set(str string, value any, ttl time.Duration) {
 
 }
 
+// Получаем элемент из массива
 func (c *cache) Get(str string) (int, error) {
 
 	c.mu.Lock()
@@ -56,6 +60,7 @@ func (c *cache) Get(str string) (int, error) {
 	return 0, errors.New("not found key")
 }
 
+// Метод удаления из массива
 func (c *cache) Delete(str string) {
 	c.mu.Lock()
 	delete(c.m, str)
@@ -64,7 +69,7 @@ func (c *cache) Delete(str string) {
 	c.mu.Unlock()
 }
 
-
+// Функция для горутинны которая удаляет элемент
 func (c * cache) timerDel(str string) {
 	for {
 		time.Sleep(100 * time.Millisecond)
