@@ -40,12 +40,14 @@ func (c *cache) Set(str string, value any, ttl time.Duration) {
 
 // Получаем элемент из массива
 func (c *cache) Get(str string) (int, error) {
-
-	c.mu.Lock()
 	// Проверяем переменную
 	c._timerDel(str)
+
+	// Практикуем медленный mutex
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	value, exist := c.m[str]
-	c.mu.Unlock()
 
 	if exist {
 		return value.value, nil
@@ -56,13 +58,19 @@ func (c *cache) Get(str string) (int, error) {
 
 // Метод удаления из массива
 func (c *cache) Delete(str string) {
+	// Практикуем медленный mutex
 	c.mu.Lock()
+	defer c.mu.Unlock()
+	
 	delete(c.m, str)
-	c.mu.Unlock()
 }
 
 // Функция которая удаляет элемент
 func (c *cache) _timerDel(str string) {
+
+	// Практикуем медленный mutex
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
 	value, ok := c.m[str]
 
