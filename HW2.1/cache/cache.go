@@ -50,7 +50,7 @@ func (c *cache) Get(str string) (int, error) {
 	if exist {
 
 		// Проверяем переменную
-		res := c.timerDelUnsafe(str, value)
+		res := c.timerDelUnsafe(str, &value)
 
 		if res {
 			return value.value, nil
@@ -70,7 +70,7 @@ func (c *cache) Delete(str string) {
 }
 
 // Функция которая удаляет элемент
-func (c *cache) timerDelUnsafe(str string, value data) bool {
+func (c *cache) timerDelUnsafe(str string, value *data) bool {
 
 	if time.Now().After(value.expireAt) {
 		delete(c.m, str)
