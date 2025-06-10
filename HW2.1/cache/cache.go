@@ -47,17 +47,11 @@ func (c *cache) Get(str string) (int, error) {
 
 	value, exist := c.m[str]
 
-	if exist {
-
-		// Проверяем переменную
-		res := c.timerDelUnsafe(str, &value)
-
-		if res {
-			return value.value, nil
-		}
+	if !exist || c.timerDelUnsafe(str, &value) {
+		return 0, errors.New("not found key")
+	
 	}
-
-	return 0, errors.New("not found key")
+	return value.value, nil
 }
 
 // Метод удаления из массива
@@ -74,8 +68,8 @@ func (c *cache) timerDelUnsafe(str string, value *data) bool {
 
 	if time.Now().After(value.expireAt) {
 		delete(c.m, str)
-		return false
+		return true
 	}
 
-	return true
+	return false
 }
