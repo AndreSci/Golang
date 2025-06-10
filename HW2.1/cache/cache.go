@@ -8,19 +8,20 @@ import (
 )
 
 type data struct {
-	value int
+	value    int
 	expireAt time.Time
 }
+
 // Обьявляем структуру
 type cache struct {
-	m        map[string]data
-	mu       sync.Mutex
+	m  map[string]data
+	mu sync.Mutex
 }
 
 // Создаем образец структуры
 func New() *cache {
 	return &cache{
-		m:        make(map[string]data),
+		m: make(map[string]data),
 	}
 }
 
@@ -35,13 +36,10 @@ func (c *cache) Set(str string, value any, ttl time.Duration) {
 	default:
 		fmt.Println("Wrong type of id")
 	}
-
 }
 
 // Получаем элемент из массива
 func (c *cache) Get(str string) (int, error) {
-	// Проверяем переменную
-	c._timerDel(str)
 
 	// Практикуем медленный mutex
 	c.mu.Lock()
@@ -50,7 +48,13 @@ func (c *cache) Get(str string) (int, error) {
 	value, exist := c.m[str]
 
 	if exist {
-		return value.value, nil
+
+		// Проверяем переменную
+		res := c.timerDelUnsafe(str, value)
+
+		if res {
+			return value.value, nil
+		}
 	}
 
 	return 0, errors.New("not found key")
@@ -61,20 +65,17 @@ func (c *cache) Delete(str string) {
 	// Практикуем медленный mutex
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	
+
 	delete(c.m, str)
 }
 
 // Функция которая удаляет элемент
-func (c *cache) _timerDel(str string) {
+func (c *cache) timerDelUnsafe(str string, value data) bool {
 
-	// Практикуем медленный mutex
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	value, ok := c.m[str]
-
-	if ok && time.Now().After(value.expireAt) {
+	if time.Now().After(value.expireAt) {
 		delete(c.m, str)
+		return false
 	}
+
+	return true
 }
